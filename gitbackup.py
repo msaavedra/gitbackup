@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
-"""A script to back up a git repository.
+"""A script to back up git repositories easily.
 
 This was designed specifically for use in backing up safely to Dropbox,
 though it can be used to back up to any path in your filesystem (ie, a mounted
-SMB or NFS remote networked directory.
+SMB or NFS remote networked directory).
 
 This script is suitable to be run as a cron job. It is careful not to do
 anything destructive, and skips git repositories where there are problems.
@@ -74,7 +74,7 @@ class MirrorManager(object):
             try:
                 mirror = Mirror(self.remote_name, source, self.dest)
             except MirrorError, reason:
-                write_error('Skipping %s' % source, reason)
+                write_error('Skipping "%s"' % source, reason)
                 self.bad_mirrors.append(source)
                 continue
             
@@ -97,7 +97,7 @@ def write_error(base_message, reason):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(
-        description='A script to back up a git repository.'
+        description='A script to back up git repositories.'
         )
     parser.add_argument(
         '-f', '--force_remote', action='store_true',
