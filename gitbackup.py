@@ -87,7 +87,7 @@ class MirrorManager(object):
     def update_all(self):
         for mirror in self.mirrors:
             mirror.update()
-            sys.stdout('"%s" successfully mirrored.\n' % mirror.source)
+            sys.stdout.write('"%s" successfully mirrored.\n' % mirror.source)
             sys.stdout.flush()
 
 def write_error(base_message, reason):
@@ -120,12 +120,12 @@ if __name__ == '__main__':
             specify as many as you wish, or use shell wildcards."""
         )
     parser.add_argument(
-        'destination', metavar='DESTINATION',
+        'dest', metavar='DESTINATION',
         help="The base directory into which the backups will be written."
         )
     options = parser.parse_args()
     manager = MirrorManager(options.remote_name, options.sources,
-        options.destination, options.force_remote)
+        options.dest, options.force_remote)
     try:
         manager.update_all()
     except BackupError, reason:
