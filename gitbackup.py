@@ -87,6 +87,8 @@ class MirrorManager(object):
     def update_all(self):
         for mirror in self.mirrors:
             mirror.update()
+            sys.stdout('"%s" successfully mirrored.\n' mirror.source)
+            sys.stdout.flush()
 
 def write_error(base_message, reason):
     sys.stderr.write('%s: %s\n' % (base_message, reason))
