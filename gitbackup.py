@@ -78,7 +78,7 @@ class MirrorManager(object):
                 self.bad_mirrors.append(source)
                 continue
             
-            if mirror in mirrors:
+            if mirror in self.mirrors:
                 msg = 'Duplicate project name "%s".' % mirror.project_name
                 raise BackupError(msg)
             
