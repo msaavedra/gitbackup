@@ -86,7 +86,12 @@ class MirrorManager(object):
     
     def update_all(self):
         for mirror in self.mirrors:
-            mirror.update()
+            try:
+                mirror.update()
+            except Exception, reason:
+                write_error('Mirror of "%s" Failed:' % mirror.source, reason)
+                continue
+            
             sys.stdout.write('"%s" successfully mirrored.\n' % mirror.source)
             sys.stdout.flush()
 
@@ -124,12 +129,12 @@ if __name__ == '__main__':
         help="The base directory into which the backups will be written."
         )
     options = parser.parse_args()
-    manager = MirrorManager(options.remote_name, options.sources,
-        options.dest, options.force_remote)
     try:
-        manager.update_all()
+        manager = MirrorManager(options.remote_name, options.sources,
+            options.dest, options.force_remote)
     except BackupError, reason:
         write_error('BACKUP ABORTED', reason)
         sys.exit(1)
+    manager.update_all()
 
 
