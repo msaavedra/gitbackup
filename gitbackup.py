@@ -22,8 +22,9 @@ class BackupError(StandardError): pass
 class Mirror(object):
     """An object that creates and updates a mirror of a repository.
     """
-    def __init__(self, remote_name, source, dest):
+    def __init__(self, remote_name, source, dest, force_remote=False):
         self.remote_name = remote_name
+        self.force_remote = force_remote
         self.source = source
         self.project_name = os.path.split(source)[1]
         self.remote_path = os.path.join(dest, self.project_name)
@@ -39,7 +40,7 @@ class Mirror(object):
             raise MirrorError('Source repository is dirty.')
         if self.remote_name in [remote.name for remote in self.repo.remotes] \
                 and self.repo.remote(self.remote_name).url != self.remote_url \
-                and not force_remote:
+                and not self.force_remote:
             raise MirrorError('Remote "%s" already in use.' % self.remote_name)
     
     def __eq__(self, other):
@@ -61,8 +62,8 @@ class MirrorManager(object):
     """An object to handle mirroring many git repositories.
     """
     def __init__(self, remote_name, sources, dest, force_remote=False):
-        self.dest = dest
         self.remote_name = remote_name
+        self.dest = os.path.abspath(dest)
         self.sources = [os.path.abspath(source) for source in sources]
         self.force_remote = force_remote
         self.mirrors = []
@@ -72,7 +73,9 @@ class MirrorManager(object):
     def _create_mirrors(self):
         for source in self.sources:
             try:
-                mirror = Mirror(self.remote_name, source, self.dest)
+                print source, self.dest
+                mirror = Mirror(self.remote_name, source, self.dest,
+                                self.force_remote)
             except MirrorError, reason:
                 write_error('Skipping "%s"' % source, reason)
                 self.bad_mirrors.append(source)
