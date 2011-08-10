@@ -3,7 +3,7 @@
 
 This was designed specifically for use in backing up safely to Dropbox,
 though it can be used to back up to any path in your filesystem (ie, a mounted
-SMB or NFS remote networked directory).
+SMB, NFS or SSHFS remote networked directory).
 
 This script is suitable to be run as a cron job. It is careful not to do
 anything destructive, and skips git repositories where there are problems.
@@ -17,7 +17,7 @@ import urllib
 import git
 
 class MirrorError(StandardError): pass
-class BackupError(StandardError): pass
+class FatalError(StandardError): pass
 
 class Mirror(object):
     """An object that creates and updates a mirror of a repository.
@@ -64,6 +64,8 @@ class MirrorManager(object):
     def __init__(self, remote_name, sources, dest, force_remote=False):
         self.remote_name = remote_name
         self.dest = os.path.abspath(dest)
+        if os.path.exists(self.dest) and not os.path.isdir(self.dest):
+            raise FatalError('Destination "%s" is not a directory' % self.dest)
         self.sources = [os.path.abspath(source) for source in sources]
         self.force_remote = force_remote
         self.mirrors = []
@@ -73,7 +75,6 @@ class MirrorManager(object):
     def _create_mirrors(self):
         for source in self.sources:
             try:
-                print source, self.dest
                 mirror = Mirror(self.remote_name, source, self.dest,
                                 self.force_remote)
             except MirrorError, reason:
@@ -83,7 +84,7 @@ class MirrorManager(object):
             
             if mirror in self.mirrors:
                 msg = 'Duplicate project name "%s".' % mirror.project_name
-                raise BackupError(msg)
+                raise FatalError(msg)
             
             self.mirrors.append(mirror)
     
@@ -135,7 +136,7 @@ if __name__ == '__main__':
     try:
         manager = MirrorManager(options.remote_name, options.sources,
             options.dest, options.force_remote)
-    except BackupError, reason:
+    except FatalError, reason:
         write_error('BACKUP ABORTED', reason)
         sys.exit(1)
     manager.update_all()
