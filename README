@@ -4,9 +4,9 @@ This was designed specifically for use in backing up safely to Dropbox,
 though it can be used to back up to any path in your filesystem (ie, a mounted
 SMB, NFS or SSHFS remote networked directory).
 
-This script is suitable to be run as a cron job. It is careful not to do
-anything destructive, and skips git repositories where there are problems.
-It reports any such errors on stderr.
+This script is suitable to be run as a cron job or from the git post-commit
+hook. It is careful not to do anything destructive, and skips git
+repositories where there are problems. It reports any such errors on stderr.
 
 Another useful setup is to run gitbackup from the git post-commit hook.
 
