@@ -8,6 +8,8 @@ This script is suitable to be run as a cron job. It is careful not to do
 anything destructive, and skips git repositories where there are problems.
 It reports any such errors on stderr.
 
+Another useful setup is to run gitbackup from the git post-commit hook.
+
 Run "gitbackup.py --help" for full directions. The basic command that will work
 for most uses is:
 
