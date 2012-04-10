@@ -31,7 +31,7 @@ class Mirror(object):
         self.remote_url = 'file://%s' % urllib.pathname2url(self.remote_path)
         try:
             self.repo = git.Repo(self.source)
-        except git.errors.InvalidGitRepositoryError:
+        except git.InvalidGitRepositoryError:
             raise MirrorError('Source directory not managed by git.')
         
         if self.source != self.repo.working_dir:
